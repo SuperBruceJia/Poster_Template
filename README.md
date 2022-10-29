@@ -1,6 +1,5 @@
-# Not so awesome academic posters
-
-Here I share some acaemic posters I used. They are not so awesome but work to the degree I survived the conference poster session. You can start with them to build your own awesome posters. 
+# Awesome Academic Posters
+## Credits: Prof. Bolei Zhou (PowerPoint Templates) and Prof. Guanying Chen (LaTeX Templates)
 
 * Poster 0 for MMSP'22 paper
 ![poster0](https://user-images.githubusercontent.com/31528604/198813122-c23a9224-2d92-446e-af4d-1656c5797918.png)
