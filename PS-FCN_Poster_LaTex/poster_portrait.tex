@@ -1,0 +1,249 @@
+\documentclass[portrait,a0paper,fontscale=0.292]{baposter}
+
+\usepackage[vlined]{algorithm2e}
+\usepackage{times}
+\usepackage{calc}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{relsize}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage[T1]{fontenc}
+\usepackage{ae}
+\usepackage{enumitem}
+
+\usepackage{colortbl}
+\usepackage{xcolor}
+\graphicspath{{images/}}
+
+\setlist[itemize]{leftmargin=*,nosep}
+ \setlength{\columnsep}{0.7em}
+ \setlength{\columnseprule}{0mm}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Save space in lists. Use this after the opening of the list
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \newcommand{\compresslist}{%
+ \setlength{\itemsep}{0pt}%
+ \setlength{\parskip}{0pt}%
+ \setlength{\parsep}{0pt}%
+ }
+\renewcommand{\rmdefault}{ptm} % Arial
+\renewcommand{\sfdefault}{ptm} % Arial
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin of Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Here starts the poster
+%%---------------------------------------------------------------------------
+%% Format it to your taste with the options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{poster}{
+ % Show grid to help with alignment
+ grid=false,
+ columns=5,
+ % Column spacing
+ colspacing=0.7em,
+ % Color style
+ headerColorOne=cyan!20!white!90!black,
+ borderColor=cyan!30!white!90!black,
+ % Format of textbox
+ textborder=faded,
+ % Format of text header
+ headerborder=open,
+ headershape=roundedright,
+ headershade=plain,
+ background=none,
+ bgColorOne=cyan!10!white,
+ headerheight=0.09\textheight}
+ % Eye Catcher
+ {
+      \includegraphics[width=0.08\linewidth]{HKU_logo}
+      \makebox[0.01\textwidth]{} 
+      \raisebox{0.08\height}{\includegraphics[width=0.08\linewidth]{oxford_logo}}
+      \makebox[0.04\textwidth]{} 
+ }
+ % Title
+ {\sc\huge\bf PS-FCN: A Flexible Learning Framework for Photometric Stereo}
+ % Authors
+ {\vspace{0.3em} Guanying Chen$^1$, Kai Han$^2$, Kwan-Yee K. Wong$^1$ \\[0.2em]
+ {$^1$ The University of Hong Kong, $^2$ University of Oxford\\[0.2em] }}
+ % University logo
+ {
+    \begin{tabular}{r}
+        \includegraphics[width=0.15\linewidth]{cropped-Logo_ECCV18_RGB_1200x280}
+    \end{tabular}
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Now define the boxes that make up the poster
+%%%---------------------------------------------------------------------------
+%%% Each box has a name and can be placed absolutely or relatively.
+%%% The only inconvenience is that you can only specify a relative position 
+%%% towards an already declared box. So if you have a box attached to the 
+%%% bottom, one to the top and a third one which should be inbetween, you 
+%%% have to specify the top and bottom boxes before you specify the middle 
+%%% box.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{\bf\color{blue} Problem Definition and Contribution}{name=contribution,column=0,row=0,span=3}{
+    \textbf{\color{blue}Goal:} Estimating the surface normal of a static object given multiple images captured under varying light directions.
+    \begin{center}
+        \vspace{-0.8em}
+        \centering\includegraphics[width=0.8\linewidth]{images/Intro}
+    \end{center}
+
+    \vspace{-0.8em}
+    \textbf{\color{blue}Key Contributions:}
+    A flexible deep learning framework for photometric stereo that 
+    \begin{itemize}
+        \item does not depend on a pre-defined set of light directions during training and testing.
+        \item processes an arbitrary number of input images in an order-agnostic manner.
+        \item generalizes well on real data after training only on the synthetic data.
+        \item achieves state-of-the-art results in calibrated photoemtric stereo and promising results in uncalibrated scenario.
+    \end{itemize}  
+}
+
+\headerbox{\bf\color{blue} Formulation}{name=formulation,column=3,span=2}{
+    \textbf{\color{blue}Assumption:} Orthographic projection and directional lights.
+    
+    \vspace{0.3em}
+    \textbf{\color{blue}Image Formation Equation:} Given $q$ color images of an object with $p$ pixels captured under different light directions, a normal matrix $\mathbf{N}_{3\times p}$, a light direction matrix $\mathbf{L}_{3\times q}$, and an observation matrix $\mathbf{I}_{3\times p\times q}$ can be constructed. Denoting the BRDFs for all observations as $\boldsymbol{\Theta}_{3\times p\times q}$, the image formation equation can be written as
+    %\vspace{-0.5em}
+    \begin{equation}
+        \textbf{I} = \boldsymbol{\Theta} \circ \text{repmat}(\textbf{N}^\top \textbf{L}, 3),
+        %\vspace{-0.5em}
+    \end{equation}
+    where $\circ$ represents element-wise multiplication, and $\text{repmat}(\mathbf{X},3)$ repeats the matrix $\mathbf{X}$ three times along the first dimension. 
+    
+    \vspace{0.3em}
+    \textbf{\color{blue}Main Idea:} Our method directly learns the mapping from $(\textbf{I}, \textbf{L})$ to $\textbf{N}$ without explicitly modeling $\boldsymbol\Theta$.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{\bf\color{blue} Method}{name=method,column=0,below=contribution,span=5}{
+\begin{minipage}[t]{0.6\textwidth}
+    \textbf{\color{blue}Network Architecture:} 
+    \vspace{-0.5em}
+    \begin{center}
+     \includegraphics[width=0.8\textwidth]{images/network_v2.pdf}
+    \end{center}
+    \vspace{-0.8em}
+    \begin{itemize}
+        \item PS-FCN consists of three components, namely a shared-weight feature extractor, a fusion layer, and a normal regression network.
+    \end{itemize}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+    \textbf{\color{blue}Loss function:}
+
+    \vspace{-0.5em} 
+    \begin{equation}
+        L_{normal} = \frac{1}{hw} \sum_{i,j} (1 - \mathbf{N}_{ij} \cdot \tilde{\mathbf{N}}_{ij})
+        \vspace{-0.5em} 
+    \end{equation}
+    where $\mathbf{N}_{ij}$ and $\tilde{\mathbf{N}}_{ij}$ denote the predicted normal and the ground truth, respectively.
+
+    \vspace{0.5em}
+    \textbf{\color{blue}Synthetic Datasets for Training:} 
+    \vspace{-0.5em}
+    \begin{center}
+        \includegraphics[width=0.98\textwidth]{images/datasets.pdf}
+    \end{center}
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{\bf\color{blue} Experiments \& Results}{name=results,column=0,below=method,row=0,span=5}{
+    %\begin{minipage}[t]{0.5\textwidth}
+        %\textbf{\color{blue}Synthetic Datasets for Training:} 
+        %\vspace{-0.2em}
+        %\begin{center}
+        %    \includegraphics[width=\textwidth]{images/datasets.pdf}
+        %\end{center}
+    %\end{minipage}
+    \begin{minipage}[t]{0.6\textwidth}
+        \textbf{\color{blue}Quantitative Results on Spheres Rendered with 100 Different Materials:} 
+        \vspace{-0.5em}
+        \begin{center}
+            \includegraphics[width=0.95\textwidth]{images/100brdf.png}
+        \end{center}
+    \end{minipage}
+    \begin{minipage}[t]{0.4\textwidth}
+        \textbf{\color{blue}Quantitative Results on DiLiGenT Main Dataset:} 
+        \vspace{-0.2em}
+        \begin{center}
+            \includegraphics[width=0.98\textwidth]{images/res_quant_diligent_main_v2}
+        \end{center}
+        \vspace{-0.5em}
+        \begin{itemize}
+            \item The numbers represent the MAE (the lower the better)
+        \end{itemize}
+    \end{minipage}
+
+    %\vspace{0.5em}
+
+    \begin{minipage}[t]{0.525\textwidth}
+        \textbf{\color{blue}Feature Visualization:}
+        \vspace{-0.5em}
+        \begin{center}
+            \includegraphics[width=\textwidth]{images/visualization}
+        \end{center}
+        \vspace{-0.9em}
+        \begin{itemize}
+            \item Different regions with similar normal directions are fired in different channels. Each channel can therefore be interpreted as the probability of the normal belonging to a certain direction.
+        \end{itemize}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.465\textwidth}
+    \textbf{\color{blue}Qualitative Results on DiLiGenT Main Dataset:}
+        \begin{center}
+            \vspace{-0.5em}
+            \includegraphics[width=0.95\textwidth]{images/res_qual_diligent_main}
+        \end{center}
+    \end{minipage}
+
+    \vspace{0.5em}
+    \begin{minipage}[t]{0.6\textwidth}
+        \vspace{0.5em}
+        \textbf{\color{blue}Qualitative Results on the Gourd\&Apple Dataset and Light Stage Data Gallery:}
+        \vspace{-0.8em}
+        \begin{center}
+            \includegraphics[width=\textwidth]{images/gourd_stage}
+        \end{center}
+    \end{minipage}
+    \begin{minipage}[t]{0.4\textwidth}
+        \textbf{\color{blue}Quantitative Results of Uncalibrated PS-FCN on DiLiGenT Main Dataset:} 
+        \vspace{-0.5em}
+        \begin{center}
+            \includegraphics[width=\textwidth]{images/res_uncalibrated}
+        \end{center}
+
+        \vspace{-2em}
+        \begin{center}
+        \begin{minipage}{0.56\linewidth}
+            \begin{center}
+            \textbf{Project Webpage}: \\
+            \vspace{0.5em}\textbf{Code} \& \textbf{Dataset} \& \textbf{Model}
+            \end{center}
+        \end{minipage}
+        \begin{minipage}{0.19\linewidth}
+            \begin{center}
+                \includegraphics[width=\linewidth]{images/PS-FCN_QRCode.png}
+            \end{center}
+        \end{minipage}
+        \end{center}
+    \end{minipage}
+}
+
+
+\end{poster}
+\end{document}
