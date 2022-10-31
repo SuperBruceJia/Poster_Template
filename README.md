@@ -1,5 +1,5 @@
-# Awesome Academic Posters
-## Credits: Prof. Bolei Zhou (PowerPoint Templates) and Prof. Guanying Chen (LaTeX Templates)
+## Awesome Academic & Research Poster Presentation
+### Credits: Prof. Bolei Zhou (PowerPoint Templates) and Prof. Guanying Chen (LaTeX Templates)
 
 * Poster 0 for MMSP'22 paper
 ![poster0](https://user-images.githubusercontent.com/31528604/198813122-c23a9224-2d92-446e-af4d-1656c5797918.png)
@@ -52,3 +52,6 @@
 
 * Poster 13
 ![poster13](Others/Poster_13.jpeg)
+
+---
+Note: Last Update: Oct 31st, 2022
