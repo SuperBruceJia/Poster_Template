@@ -1,4 +1,4 @@
-## Awesome Research & Design (R&D) Poster Presentation
+## Awesome Research Design (R&D) Poster Presentation
 ### Credits: Prof. Bolei Zhou (PowerPoint Templates) and Prof. Guanying Chen (LaTeX Templates)
 
 * Poster 0 for MMSP'22 paper
